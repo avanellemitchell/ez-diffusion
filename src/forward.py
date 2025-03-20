@@ -15,3 +15,5 @@ def compute_variance_rt(a, v):
 def compute_accuracy(a, v):
     """Computes accuracy using EZ diffusion model."""
     return 1 / (1 + math.exp(-2 * v * a))
+
+#Developed with the help of AI
