@@ -1,6 +1,6 @@
 import unittest
-from src.forward import ez_forward
-from src.inverse import ez_inverse
+from src.forward import compute_mean_rt, compute_variance_rt, compute_accuracy
+from src.inverse import recover_parameters
 from src.simulate import simulate_ez_diffusion
 from src.utils import compute_bias, compute_squared_error, mean, variance
 
@@ -9,7 +9,10 @@ class TestEZDiffusion(unittest.TestCase):
     def test_forward_equations(self):
         """Test that the EZ diffusion forward equations produce expected values."""
         a, v, t = 1.0, 1.5, 0.3  # Sample parameters
-        mean_RT, var_RT, accuracy = ez_forward(a, v, t)
+        
+        mean_RT = compute_mean_rt(a, v, t)
+        var_RT = compute_variance_rt(a, v)
+        accuracy = compute_accuracy(a, v)
 
         # Ensure values are within reasonable ranges
         self.assertGreater(mean_RT, 0)  # Reaction times must be positive
@@ -20,9 +23,11 @@ class TestEZDiffusion(unittest.TestCase):
     def test_inverse_equations(self):
         """Test that the EZ diffusion inverse equations correctly recover parameters."""
         true_a, true_v, true_t = 1.2, 1.0, 0.25
-        mean_RT, var_RT, accuracy = ez_forward(true_a, true_v, true_t)
+        mean_RT = compute_mean_rt(true_a, true_v, true_t)
+        var_RT = compute_variance_rt(true_a, true_v)
+        accuracy = compute_accuracy(true_a, true_v)
 
-        a_est, v_est, t_est = ez_inverse(mean_RT, var_RT, accuracy)
+        a_est, v_est, t_est = recover_parameters(mean_RT, var_RT, accuracy)
 
         self.assertAlmostEqual(a_est, true_a, delta=0.2)
         self.assertAlmostEqual(v_est, true_v, delta=0.2)
@@ -72,4 +77,4 @@ class TestEZDiffusion(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
-#Completed with the help of AI
+#Developed with the help of AI
